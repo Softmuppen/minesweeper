@@ -45,3 +45,9 @@ class MineBoard(Board):
             if self.board_array[random_row, random_col] == Cell.EMPTY:
                 self.board_array[random_row, random_col] = Cell.MINE
                 actual_mine_count += 1
+
+class PlayerBoard(Board):
+
+    def __init__(self, width, height):
+        print(f"Generating a {width}x{height} player board")
+        Board.__init__(self, width, height)
