@@ -3,8 +3,7 @@
 import random
 import numpy as np
 
-import cells
-import difficulties
+from enums import cells, difficulties 
 
 # Board definitions
 BOARD_DIFFICULTY = difficulties.Difficulty.MEDIUM
