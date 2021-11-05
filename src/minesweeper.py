@@ -17,13 +17,13 @@ SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 640
 SCREEN_TITLE = "Minesweeper"
 
-# Pyglet Constants
+# Pyglet Constants, this is needed to get OpenGL working
 ANTIALIASING=False
 
 # Board Constants
 BOARD_DIFFICULTY = Difficulty.EASY
-BOARD_WIDTH = 5
-BOARD_HEIGHT = 5
+BOARD_WIDTH = 28
+BOARD_HEIGHT = 18
 
 class Minesweeper(arcade.Window):
     """
@@ -40,7 +40,7 @@ class Minesweeper(arcade.Window):
         # Initialize list for all drawables
         self.draw_list = None
 
-        arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
+        arcade.set_background_color(arcade.csscolor.SLATE_GRAY)
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
