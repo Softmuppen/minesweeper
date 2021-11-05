@@ -31,6 +31,7 @@ class Minesweeper(arcade.Window):
     """
 
     board = None
+    draw_list = None
 
     def __init__(self):
 
@@ -62,6 +63,13 @@ class Minesweeper(arcade.Window):
   
         # Draw sprites
         self.draw_list.draw()
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        clicked_cells = arcade.get_sprites_at_point((x, y), self.draw_list)
+        if len(clicked_cells) == 1:
+            self.board.handleCellClick(clicked_cells[0])
+        elif len(clicked_cells) > 1:
+            print("Multiple cells were clicked, this should not happen")
 
 def main():
     """Main function"""

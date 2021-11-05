@@ -31,21 +31,34 @@ class Cell(arcade.Sprite):
 
     def update_sprite(self):
         # Maybe move load somewhere else, this runs alot
-        self.texture = arcade.load_texture(self.getSpritePath())
+        self.texture = arcade.load_texture(self.get_sprite_path())
 
-    def getSpritePath(self):
+    def get_sprite_path(self):
         basepath = "images/"
         sprite_filename = None
-        
-        if not self.discovered:
+
+        if self.is_discovered():
+            if self.mine:
+                sprite_filename = CellSprite.MINE
+            else:
+                sprite_filename = CellSprite.BLANK
+
+        if self.is_undiscovered():
             sprite_filename = CellSprite.UNDISCOVERED
-        if self.mine:
-            sprite_filename = CellSprite.MINE
 
         return basepath + sprite_filename
 
-    def setMine(self, isMine):
+    def set_mine(self, isMine):
         self.mine = isMine
 
-    def isMine(self):
+    def is_mine(self):
         return self.mine
+
+    def set_discovered(self, discovered):
+        self.discovered = discovered
+
+    def is_discovered(self):
+        return self.discovered
+
+    def is_undiscovered(self):
+        return not self.is_discovered()

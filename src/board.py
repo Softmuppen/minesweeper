@@ -3,6 +3,7 @@ import random
 import arcade
 
 from cell import Cell
+from enums.difficulties import Difficulty
 
 # Cell constants
 CELL_WIDTH = 32
@@ -40,15 +41,12 @@ class Board:
         while row_index >= 0:
             col_index = 0
             while col_index < self.width:
-                print(f"[{str(self.get_cell([row_index, col_index]).isMine())[0]}]", end ="")
+                print(f"[{str(self.get_cell([row_index, col_index]).is_mine())[0]}]", end ="")
                 col_index += 1
             print()
             row_index -= 1
 
-    def add_mines(self, difficulty):
-
-        print("Mine add")
-
+    def add_mines(self, difficulty: Difficulty):
         # Calculate how many mines based on diffuculty
         expected_mine_count = int(np.floor((self.width * self.height) * (difficulty / 100)))
         print(f"Adding {expected_mine_count} mines for difficulty {difficulty.name}")
@@ -60,16 +58,10 @@ class Board:
             random_col = random.randint(0, self.width-1)
             random_index = [random_row, random_col]
             
-            #self.get_cell([0,0]).setMine(True)
-            #self.get_cell([1,1]).setMine(True)
-            #self.get_cell([2,2]).setMine(True)
-            #self.get_cell([3,3]).setMine(True)
-            #break
-
             # Check if index is already mine
             random_cell = self.get_cell(random_index)
-            if not random_cell.isMine():
-                random_cell.setMine(True)
+            if not random_cell.is_mine():
+                random_cell.set_mine(True)
                 actual_mine_count += 1
 
     def get_cell(self, index):
@@ -85,3 +77,13 @@ class Board:
                 new_list.append(cell)
         return new_list
 
+    def handleCellClick(self, cell: Cell):
+        if cell.is_discovered():
+            print("Already discovered")
+
+        if cell.is_undiscovered():
+            print("Discover cell")
+            cell.set_discovered(True)
+
+        if cell.is_mine():
+            print("You lost!")
