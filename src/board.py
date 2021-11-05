@@ -1,9 +1,9 @@
 import numpy as np
 import random
-import arcade
 
 from cell import Cell
 from enums.difficulties import Difficulty
+from enums.mouse_clicks import MouseClick
 
 # Cell constants
 CELL_WIDTH = 32
@@ -70,20 +70,25 @@ class Board:
     def get_update_cell_sprite_list(self):
         new_list = []
         for row_index in range(self.height):
-            row_list = []
             for col_index in range(self.width):
                 cell = self.get_cell([row_index,col_index])
                 cell.update_sprite()
                 new_list.append(cell)
         return new_list
 
-    def handleCellClick(self, cell: Cell):
-        if cell.is_discovered():
-            print("Already discovered")
+    def handleCellClick(self, cell: Cell, button: MouseClick):
+        if button is MouseClick.LEFT:
+            if cell.is_discovered():
+                print("Already discovered")
 
-        if cell.is_undiscovered():
-            print("Discover cell")
-            cell.set_discovered(True)
+            if cell.is_undiscovered():
+                print("Discover cell")
+                cell.set_discovered(True)
 
-        if cell.is_mine():
-            print("You lost!")
+            if cell.is_mine():
+                print("You lost!")
+
+        if button is MouseClick.RIGHT:
+            if cell.is_undiscovered():
+                print("Toggle flag!")
+                cell.toggle_flagged()

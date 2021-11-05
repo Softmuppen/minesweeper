@@ -44,7 +44,10 @@ class Cell(arcade.Sprite):
                 sprite_filename = CellSprite.BLANK
 
         if self.is_undiscovered():
-            sprite_filename = CellSprite.UNDISCOVERED
+            if self.flagged:
+               sprite_filename = CellSprite.FLAGGED 
+            else:
+                sprite_filename = CellSprite.UNDISCOVERED
 
         return basepath + sprite_filename
 
@@ -62,3 +65,9 @@ class Cell(arcade.Sprite):
 
     def is_undiscovered(self):
         return not self.is_discovered()
+
+    def toggle_flagged(self):
+        self.flagged = not self.is_flagged()
+
+    def is_flagged(self):
+        return self.flagged

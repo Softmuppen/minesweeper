@@ -6,8 +6,10 @@ Minesweeper Game
 
 import arcade
 
-from enums.difficulties import Difficulty 
 from board import Board
+from enums.difficulties import Difficulty
+from enums.mouse_clicks import MouseClick
+
 
 # Testing
 from cell import Cell
@@ -67,7 +69,7 @@ class Minesweeper(arcade.Window):
     def on_mouse_press(self, x, y, button, key_modifiers):
         clicked_cells = arcade.get_sprites_at_point((x, y), self.draw_list)
         if len(clicked_cells) == 1:
-            self.board.handleCellClick(clicked_cells[0])
+            self.board.handleCellClick(clicked_cells[0], MouseClick(button))
         elif len(clicked_cells) > 1:
             print("Multiple cells were clicked, this should not happen")
 
