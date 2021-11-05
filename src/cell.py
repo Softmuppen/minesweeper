@@ -3,7 +3,7 @@ import arcade
 from enum import Enum
 
 class CellSprite(str, Enum):
-    BLANK = "0.png"
+    NEIGHBOR_0 = "0.png"
     NEIGHBOR_1 = "1.png"
     NEIGHBOR_2 = "2.png"
     NEIGHBOR_3 = "3.png"
@@ -28,6 +28,7 @@ class Cell(arcade.Sprite):
         self.discovered = False
         self.mine = False
         self.flagged = False
+        self.neighboring_mines = 0
 
     def update_sprite(self):
         # Maybe move load somewhere else, this runs alot
@@ -41,7 +42,24 @@ class Cell(arcade.Sprite):
             if self.mine:
                 sprite_filename = CellSprite.MINE
             else:
-                sprite_filename = CellSprite.BLANK
+                if self.neighboring_mines == 0:
+                    sprite_filename = CellSprite.NEIGHBOR_0
+                if self.neighboring_mines == 1:
+                    sprite_filename = CellSprite.NEIGHBOR_1
+                if self.neighboring_mines == 2:
+                    sprite_filename = CellSprite.NEIGHBOR_2
+                if self.neighboring_mines == 3:
+                    sprite_filename = CellSprite.NEIGHBOR_3
+                if self.neighboring_mines == 4:
+                    sprite_filename = CellSprite.NEIGHBOR_4
+                if self.neighboring_mines == 5:
+                    sprite_filename = CellSprite.NEIGHBOR_5
+                if self.neighboring_mines == 6:
+                    sprite_filename = CellSprite.NEIGHBOR_6
+                if self.neighboring_mines == 7:
+                    sprite_filename = CellSprite.NEIGHBOR_7
+                if self.neighboring_mines == 8:
+                    sprite_filename = CellSprite.NEIGHBOR_8
 
         if self.is_undiscovered():
             if self.flagged:
@@ -56,6 +74,12 @@ class Cell(arcade.Sprite):
 
     def is_mine(self):
         return self.mine
+
+    def set_neighboring_mines(self, neighboring_mines):
+        self.neighboring_mines = neighboring_mines
+
+    def get_neighboring_mines(self):
+        return self.neighboring_mines
 
     def set_discovered(self, discovered):
         self.discovered = discovered
