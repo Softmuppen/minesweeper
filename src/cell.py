@@ -22,9 +22,10 @@ class Cell(arcade.Sprite):
     mine = None
     flagged = None
 
-    def __init__(self):
+    def __init__(self, index):
         super().__init__()
 
+        self.index = index
         self.discovered = False
         self.mine = False
         self.flagged = False
@@ -68,6 +69,9 @@ class Cell(arcade.Sprite):
                 sprite_filename = CellSprite.UNDISCOVERED
 
         return basepath + sprite_filename
+
+    def get_index(self):
+        return self.index
 
     def set_mine(self, isMine):
         self.mine = isMine

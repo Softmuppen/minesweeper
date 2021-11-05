@@ -16,9 +16,10 @@ class Board:
     def __init__(self, width, height, difficulty):
         self.width = width
         self.height = height
-        self.cell_array = self.generate_empty_board()
+        self.cell_array = self.generate_empty_board()q
         self.add_mines(difficulty)
         self.calculate_neighbors()
+        self.print_board()
 
     def generate_empty_board(self):
         print(f"Generating {self.width}x{self.height} board with {self.width * self.height} cells")
@@ -31,7 +32,7 @@ class Board:
                 y_position = START_Y + row_index * CELL_HEIGHT
                 
                 # Create new cell and add to list
-                cell = Cell()
+                cell = Cell([row_index, col_index])
                 cell.position = x_position, y_position
                 row_list.append(cell)
             new_cell_array.append(row_list)
@@ -42,7 +43,11 @@ class Board:
         while row_index >= 0:
             col_index = 0
             while col_index < self.width:
-                print(f"[{str(self.get_cell([row_index, col_index]).is_mine())[0]}]", end ="")
+                if self.get_cell([row_index, col_index]).is_mine():
+                    print(f"[X]", end ="")
+                else:
+                    print(f"[{self.get_cell([row_index, col_index]).get_neighboring_mines()}]", end ="")
+
                 col_index += 1
             print()
             row_index -= 1
@@ -65,31 +70,47 @@ class Board:
             if not random_cell.is_mine():
                 random_cell.set_mine(True)
                 actual_mine_count += 1
-                        
+
+    def get_neighbors(self, index):
+        neighboring_cells = []
+        for neighbor_row_index in range(index[0]-1, index[0]+2):
+            for neighbor_col_index in range(index[1]-1, index[1]+2):
+                # Ignore target cell itself
+                if neighbor_row_index == index[0] and neighbor_col_index == index[1]:
+                    pass
+                # Make sure we are inbounds
+                is_valid_row = neighbor_row_index >= 0 and neighbor_row_index < self.height
+                is_valid_col = neighbor_col_index >= 0 and neighbor_col_index < self.width
+                if is_valid_row and is_valid_col:
+                    neighboring_cells.append(self.get_cell([neighbor_row_index,neighbor_col_index]))
+                else:
+                    pass
+
+        return neighboring_cells
+
     def calculate_neighbors(self):
         # Populate neighbor values
         for row_index in range(self.height):
             for col_index in range(self.width):
-                
-                # For each cell
-                
-                print(f"Target: {row_index},{col_index}")
 
+                # Iterate neighbor cells and count mines
                 neighboring_mines = 0
+                for neighbor_cell in self.get_neighbors([row_index, col_index]):
+                    if neighbor_cell.is_mine():
+                        neighboring_mines += 1
+                        pass
 
-                # Iterate neighbor cells
-                for neighbor_row_index in range(row_index-1, row_index+2):
-                    for neighbor_col_index in range(col_index-1, col_index+2):
-                        # Ignore target cell itself
-                        if neighbor_row_index == row_index and neighbor_col_index == col_index:
-                            break
-                        if neighbor_row_index > 0 and neighbor_row_index < self.height:
-                            if neighbor_col_index > 0 and neighbor_col_index < self.width:
-                                if self.get_cell([neighbor_row_index, neighbor_col_index]).is_mine():
-                                    neighboring_mines += 1
-                                    print(f"Neigh: {neighbor_row_index},{neighbor_col_index}")
                 target_cell = self.get_cell([row_index, col_index])
                 target_cell.set_neighboring_mines(neighboring_mines)
+
+    def discover_cell_and_neighbors(self, current_cell):
+        # Discover cell
+        current_cell.set_discovered(True)
+
+        if current_cell.get_neighboring_mines() == 0:
+            for neighbor_cell in self.get_neighbors(current_cell.get_index()):
+                if neighbor_cell.is_undiscovered():
+                    self.discover_cell_and_neighbors(neighbor_cell)
 
     def get_cell(self, index):
         return self.cell_array[index[0]][index[1]]
@@ -104,21 +125,13 @@ class Board:
         return new_list
 
     def handleCellClick(self, cell: Cell, button: MouseClick):
-
-        print(f"Neighbor mines: {cell.get_neighboring_mines()}")
-
         if button is MouseClick.LEFT:
-            if cell.is_discovered():
-                print("Already discovered")
-
             if cell.is_undiscovered():
-                print("Discover cell")
-                cell.set_discovered(True)
+                self.discover_cell_and_neighbors(cell)
 
             if cell.is_mine():
                 print("You lost!")
 
         if button is MouseClick.RIGHT:
             if cell.is_undiscovered():
-                print("Toggle flag!")
                 cell.toggle_flagged()

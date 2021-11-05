@@ -24,8 +24,8 @@ ANTIALIASING=False
 
 # Board Constants
 BOARD_DIFFICULTY = Difficulty.EASY
-BOARD_WIDTH = 28
-BOARD_HEIGHT = 18
+BOARD_WIDTH = 28 #28
+BOARD_HEIGHT = 18 #18
 
 class Minesweeper(arcade.Window):
     """
@@ -50,7 +50,6 @@ class Minesweeper(arcade.Window):
 
         # Populate drawables
         self.board = Board(BOARD_WIDTH,BOARD_HEIGHT,BOARD_DIFFICULTY)
-        self.board.print_board()
 
     def on_draw(self):
         """Render the screen."""
