@@ -1,7 +1,8 @@
 import numpy as np
 import random
+import arcade
 
-from enums.cells import Cell
+from enums.cells import HiddenCellType
 
 class Board:
 
@@ -42,8 +43,8 @@ class MineBoard(Board):
         while actual_mine_count < expected_mine_count:
             random_row = random.randint(0, self.height-1)
             random_col = random.randint(0, self.width-1)
-            if self.board_array[random_row, random_col] == Cell.EMPTY:
-                self.board_array[random_row, random_col] = Cell.MINE
+            if self.board_array[random_row, random_col] == HiddenCellType.EMPTY:
+                self.board_array[random_row, random_col] = HiddenCellType.MINE
                 actual_mine_count += 1
 
 class PlayerBoard(Board):
