@@ -4,6 +4,12 @@ import arcade
 
 from cell import Cell
 
+# Cell constants
+CELL_WIDTH = 32
+CELL_HEIGHT = 32
+START_X = CELL_WIDTH // 2
+START_Y = CELL_HEIGHT // 2
+
 class Board:
 
     def __init__(self, width, height, difficulty):
@@ -15,12 +21,18 @@ class Board:
     def generate_empty_board(self):
         print(f"Generating {self.width}x{self.height} board with {self.width * self.height} cells")
         new_cell_array = []
-        for row in range(self.height):
-            row = []
-            for col in range(self.width):
+        for row_index in range(self.height):
+            row_list = []
+            for col_index in range(self.width):
+                # Calculate position for new cell
+                x_position = START_X + col_index * CELL_WIDTH
+                y_position = START_Y + row_index * CELL_HEIGHT
+                
+                # Create new cell and add to list
                 cell = Cell()
-                row.append(cell)
-            new_cell_array.append(row)
+                cell.position = x_position, y_position
+                row_list.append(cell)
+            new_cell_array.append(row_list)
         return new_cell_array
 
     def print_board(self):
@@ -56,4 +68,14 @@ class Board:
 
     def get_cell(self, index):
         return self.cell_array[index[0]][index[1]]
+
+    def get_update_cell_sprite_list(self):
+        new_list = []
+        for row_index in range(self.height):
+            row_list = []
+            for col_index in range(self.width):
+                cell = self.get_cell([row_index,col_index])
+                cell.update_sprite()
+                new_list.append(cell)
+        return new_list
 

@@ -22,15 +22,8 @@ ANTIALIASING=False
 
 # Board Constants
 BOARD_DIFFICULTY = Difficulty.EASY
-BOARD_WIDTH = 30
-BOARD_HEIGHT = 20
-
-# Cell constants
-CELL_WIDTH = 32
-CELL_HEIGHT = 32
-START_X = CELL_WIDTH // 2
-START_Y = CELL_HEIGHT // 2
-
+BOARD_WIDTH = 5
+BOARD_HEIGHT = 5
 
 class Minesweeper(arcade.Window):
     """
@@ -64,21 +57,9 @@ class Minesweeper(arcade.Window):
         # Define draw list as sprite list
         self.draw_list = arcade.SpriteList()
 
-        # Test draw cell
-        row_index = 0
-        while row_index < self.board.height:
-            col_index = 0
-            while col_index < self.board.width:
-                cell = self.board.get_cell([row_index, col_index])
-                cell.update_sprite()
-                x_position = START_X + col_index * cell.width
-                y_position = START_Y + row_index * cell.height
-                cell.position = x_position, y_position
-                self.draw_list.append(cell)
-                #print(f"[{player_self.board.self.board_array[row_index, col_index]}]", end ="")
-                col_index += 1
-            row_index += 1
-
+        # Fetch cells and add to drawlist
+        self.draw_list.extend(self.board.get_update_cell_sprite_list())
+  
         # Draw sprites
         self.draw_list.draw()
 
