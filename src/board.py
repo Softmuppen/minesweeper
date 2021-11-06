@@ -16,7 +16,7 @@ class Board:
     def __init__(self, width, height, difficulty):
         self.width = width
         self.height = height
-        self.cell_array = self.generate_empty_board()q
+        self.cell_array = self.generate_empty_board()
         self.add_mines(difficulty)
         self.calculate_neighbors()
         self.print_board()
