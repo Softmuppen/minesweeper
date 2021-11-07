@@ -15,8 +15,8 @@ from enums.mouse_clicks import MouseClick
 from cell import Cell
 
 # Constants
-SCREEN_WIDTH = 960 #960
-SCREEN_HEIGHT = 704 #704
+SCREEN_WIDTH = 960
+SCREEN_HEIGHT = 704
 SCREEN_TITLE = "Minesweeper"
 
 # Pyglet Constants, this is needed to get OpenGL working
@@ -49,7 +49,7 @@ class Minesweeper(arcade.Window):
         """Set up the game here. Call this function to restart the game."""
 
         # Populate drawables
-        self.board = Board(BOARD_WIDTH,BOARD_HEIGHT,BOARD_DIFFICULTY)
+        self.board = Board(BOARD_WIDTH, BOARD_HEIGHT, BOARD_DIFFICULTY)
 
     def on_draw(self):
         """Render the screen."""

@@ -38,7 +38,7 @@ class Cell(arcade.Sprite):
         self.texture = arcade.load_texture(self.get_sprite_path(self.decide_sprite_integer()))
 
     def get_sprite_path(self, cell_sprite: CellSprite):
-        basepath = "images/"
+        basepath = "images/cell/"
         file_extension = ".png"
         return basepath + str(cell_sprite.value) + file_extension
 
