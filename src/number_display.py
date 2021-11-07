@@ -15,14 +15,13 @@ class NumberSprite(Enum):
     NUMBER_9 = 9
 
 class NumberDisplay(arcade.Sprite):
-    print(f"NumberSpriteEnum: {NumberSprite(0).value}")
 
     def __init__(self, display_value):
         super().__init__()
+
         self.display_value = display_value
 
     def update_sprite(self):
-        # Maybe move load somewhere else, this runs alot
         self.texture = arcade.load_texture(self.get_sprite_path(NumberSprite(self.display_value)))
 
     def get_sprite_path(self, number_sprite: NumberSprite):
