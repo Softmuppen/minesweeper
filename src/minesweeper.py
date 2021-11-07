@@ -7,6 +7,7 @@ Minesweeper Game
 import arcade
 
 from board import Board
+from game_button import GameButton
 from digit_display import DigitDisplay
 from enums.difficulties import Difficulty
 from enums.mouse_clicks import MouseClick
@@ -54,9 +55,15 @@ class Minesweeper(arcade.Window):
         # Create board
         self.board = Board(BOARD_WIDTH, BOARD_HEIGHT, BOARD_DIFFICULTY)
 
-        # Create displays
+        # Create mines left display
         self.mine_left_display = DigitDisplay(4, 0, 681)
-        self.time_counter = DigitDisplay(4, 0 + (self.mine_left_display.width * 2), 681)
+
+        # Create Game button
+        self.game_button = GameButton()
+        self.game_button.position = self.mine_left_display.width + (self.game_button.width // 2), 681
+
+        # Create timer display
+        self.time_counter = DigitDisplay(4, self.mine_left_display.width + self.game_button.width, 681)
 
         # Start game timer
         self.total_time = 0.0
@@ -71,6 +78,9 @@ class Minesweeper(arcade.Window):
 
         # Fetch cells and add to drawlist
         self.draw_list.extend(self.board.get_update_cell_sprite_list())
+
+        # Fetch cells and add to drawlist
+        self.draw_list.append(self.game_button)
 
         # Fetch displays and add to drawlist
         self.draw_list.extend(self.mine_left_display.get_sprite_list())
@@ -89,13 +99,10 @@ class Minesweeper(arcade.Window):
         # Update mine left counter
         self.mine_left_display.update_display_value(self.board.mines_total-self.board.flags_total)
 
-        # Restart game if lost
-        if self.board.game_lost:
-            self.setup()
-
-        # Restart game if won
-        if self.board.game_won:
-            self.setup()
+        # Update game button
+        self.game_button.game_lost = self.board.game_lost
+        self.game_button.game_won = self.board.game_won
+        self.game_button.update_sprite()
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
         """ User moves mouse """
@@ -107,10 +114,15 @@ class Minesweeper(arcade.Window):
         pass
 
     def on_mouse_press(self, x, y, button, key_modifiers):
-        clicked_cells = arcade.get_sprites_at_point((x, y), self.draw_list)
-        if len(clicked_cells) == 1:
-            self.board.handleCellClick(clicked_cells[0], MouseClick(button))
-        elif len(clicked_cells) > 1:
+        clicked_sprites = arcade.get_sprites_at_point((x, y), self.draw_list)
+        if len(clicked_sprites) == 1:
+            if isinstance(clicked_sprites[0], GameButton):
+                self.setup()
+            elif (not self.board.game_lost) and (not self.board.game_won):
+                self.board.handleCellClick(clicked_sprites[0], MouseClick(button))
+            else:
+                print("Should not happen")
+        elif len(clicked_sprites) > 1:
             print("Multiple cells were clicked, this should not happen")
 
 def main():

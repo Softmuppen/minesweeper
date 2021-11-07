@@ -163,7 +163,6 @@ class Board:
                     if not self.mines_generated:
                         self.add_mines()
                         self.calculate_neighbors()
-                        self.print_board()
                     self.discover_cell_and_neighbors(self.clicked_cell)
                     if self.undiscovered_mineless_cells_left == 0:
                         self.game_won = True
