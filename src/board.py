@@ -48,10 +48,10 @@ class Board:
         while row_index >= 0:
             col_index = 0
             while col_index < self.width:
-                if self.get_cell_by_index([row_index, col_index]).is_mine():
+                if self.get_cell_by_index([row_index, col_index]).mine:
                     print(f"[X]", end ="")
                 else:
-                    print(f"[{self.get_cell_by_index([row_index, col_index]).get_neighboring_mines()}]", end ="")
+                    print(f"[{self.get_cell_by_index([row_index, col_index]).neighboring_mines}]", end ="")
 
                 col_index += 1
             print()
@@ -80,17 +80,11 @@ class Board:
                 continue
 
             # Check if cell is already mine
-            if not random_cell.is_mine() and self.clicked_cell != random_cell:
-                random_cell.set_mine(True)
+            if not random_cell.mine and self.clicked_cell != random_cell:
+                random_cell.mine = True
                 actual_mine_count += 1
         self.mines_generated = True
         self.undiscovered_mineless_cells_left = (self.width * self.height) - actual_mine_count
-
-    def set_lost(self, lost):
-        self.lost = lost
-
-    def get_lost(self):
-        return self.lost
 
     def get_undiscovered_cells_left(self):
         return self.undiscovered_cells_left
@@ -121,12 +115,12 @@ class Board:
                 # Iterate neighbor cells and count mines
                 neighboring_mines = 0
                 for neighbor_cell in self.get_neighbors(self.get_cell_by_index([row_index, col_index])):
-                    if neighbor_cell.is_mine():
+                    if neighbor_cell.mine:
                         neighboring_mines += 1
                         pass
 
                 target_cell = self.get_cell_by_index([row_index, col_index])
-                target_cell.set_neighboring_mines(neighboring_mines)
+                target_cell.neighboring_mines = neighboring_mines
 
     def discover_cell_and_neighbors(self, current_cell):
         # Discover cell
@@ -134,7 +128,7 @@ class Board:
         self.undiscovered_mineless_cells_left -= 1
 
         # Discover neighbors
-        if current_cell.get_neighboring_mines() == 0:
+        if current_cell.neighboring_mines == 0:
             for neighbor_cell in self.get_neighbors(current_cell):
                 if neighbor_cell.is_undiscovered():
                     self.discover_cell_and_neighbors(neighbor_cell)
@@ -168,19 +162,19 @@ class Board:
                         self.win = True
                         print("You won!")
 
-                if self.clicked_cell.is_mine():
-                    self.set_lost(True)
+                if self.clicked_cell.mine:
+                    self.lost = True
                     print("You lost!")
 
         if button is MouseClick.RIGHT:
             if self.clicked_cell.is_undiscovered():
-                self.clicked_cell.toggle_flagged()
+                self.clicked_cell.flagged = not self.clicked_cell.flagged
 
     def handleCellHover(self, hovered_cell: Cell):
         if not hovered_cell == self.highlighted_cell:
             if not self.highlighted_cell == None:
-                self.highlighted_cell.set_highlighted(False)
-            hovered_cell.set_highlighted(True)
+                self.highlighted_cell.highlighted = False
+            hovered_cell.highlighted = True
             self.highlighted_cell = hovered_cell
         else:
             pass

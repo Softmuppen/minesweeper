@@ -65,9 +65,9 @@ class Cell(arcade.Sprite):
                     sprite_filename = CellSprite.NEIGHBOR_8
 
         if self.is_undiscovered():
-            if self.is_flagged():
-               sprite_filename = CellSprite.FLAGGED 
-            elif self.is_highlighted():
+            if self.flagged:
+               sprite_filename = CellSprite.FLAGGED
+            elif self.highlighted:
                 sprite_filename = CellSprite.UNDISCOVERED_HIGHLIGHTED
             else:
                 sprite_filename = CellSprite.UNDISCOVERED
@@ -77,18 +77,6 @@ class Cell(arcade.Sprite):
     def get_index(self):
         return self.index
 
-    def set_mine(self, isMine):
-        self.mine = isMine
-
-    def is_mine(self):
-        return self.mine
-
-    def set_neighboring_mines(self, neighboring_mines):
-        self.neighboring_mines = neighboring_mines
-
-    def get_neighboring_mines(self):
-        return self.neighboring_mines
-
     def set_discovered(self, discovered):
         self.discovered = discovered
 
@@ -97,15 +85,3 @@ class Cell(arcade.Sprite):
 
     def is_undiscovered(self):
         return not self.is_discovered()
-
-    def toggle_flagged(self):
-        self.flagged = not self.is_flagged()
-
-    def is_flagged(self):
-        return self.flagged
-
-    def is_highlighted(self):
-        return self.highlighted
-
-    def set_highlighted(self, highlighted):
-        self.highlighted = highlighted
