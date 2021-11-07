@@ -16,7 +16,7 @@ from cell import Cell
 
 # Constants
 SCREEN_WIDTH = 960
-SCREEN_HEIGHT = 640
+SCREEN_HEIGHT = 704
 SCREEN_TITLE = "Minesweeper"
 
 # Pyglet Constants, this is needed to get OpenGL working
@@ -64,6 +64,11 @@ class Minesweeper(arcade.Window):
   
         # Draw sprites
         self.draw_list.draw()
+
+    def on_update(self, delta_time):
+        # Restart game if lost
+        if self.board.get_lost():
+            self.setup()
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
         """ User moves mouse """

@@ -18,6 +18,7 @@ class Board:
         self.height = height
         self.cell_array = self.generate_empty_board()
         self.highlighted_cell = None
+        self.lost = False
 
         # Calculate number of mine and add to board
         self.mine_total = self.calculate_total_mine_count(difficulty)
@@ -60,8 +61,6 @@ class Board:
             print()
             row_index -= 1
 
-
-
     def calculate_total_mine_count(self, difficulty: Difficulty):
         # Calculate how many mines based on diffuculty
         expected_mine_count = int(np.floor((self.width * self.height) * (difficulty / 100)))
@@ -69,7 +68,6 @@ class Board:
         return expected_mine_count
 
     def add_mines(self, expected_mine_count):
-
         # Add mines
         actual_mine_count = 0
         while actual_mine_count < expected_mine_count:
@@ -83,6 +81,12 @@ class Board:
             if not random_cell.is_mine():
                 random_cell.set_mine(True)
                 actual_mine_count += 1
+
+    def set_lost(self, lost):
+        self.lost = lost
+
+    def get_lost(self):
+        return self.lost
 
     def get_undiscovered_cells_left(self):
         return self.undiscovered_cells_left
@@ -147,6 +151,7 @@ class Board:
                 self.discover_cell_and_neighbors(cell)
 
             if cell.is_mine():
+                self.set_lost(True)
                 print("You lost!")
 
         if button is MouseClick.RIGHT:
