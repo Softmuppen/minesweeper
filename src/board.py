@@ -17,7 +17,15 @@ class Board:
         self.width = width
         self.height = height
         self.cell_array = self.generate_empty_board()
-        self.add_mines(difficulty)
+        self.highlighted_cell = None
+
+        # Calculate number of mine and add to board
+        self.mine_total = self.calculate_total_mine_count(difficulty)
+        self.add_mines(self.mine_total)
+
+        # Calculate number of undiscovered cells
+        self.undiscovered_cells_left = (self.width * self.height) - self.mine_total
+
         self.calculate_neighbors()
         self.print_board()
 
@@ -43,19 +51,24 @@ class Board:
         while row_index >= 0:
             col_index = 0
             while col_index < self.width:
-                if self.get_cell([row_index, col_index]).is_mine():
+                if self.get_cell_by_index([row_index, col_index]).is_mine():
                     print(f"[X]", end ="")
                 else:
-                    print(f"[{self.get_cell([row_index, col_index]).get_neighboring_mines()}]", end ="")
+                    print(f"[{self.get_cell_by_index([row_index, col_index]).get_neighboring_mines()}]", end ="")
 
                 col_index += 1
             print()
             row_index -= 1
 
-    def add_mines(self, difficulty: Difficulty):
+
+
+    def calculate_total_mine_count(self, difficulty: Difficulty):
         # Calculate how many mines based on diffuculty
         expected_mine_count = int(np.floor((self.width * self.height) * (difficulty / 100)))
         print(f"Adding {expected_mine_count} mines for difficulty {difficulty.name}")
+        return expected_mine_count
+
+    def add_mines(self, expected_mine_count):
 
         # Add mines
         actual_mine_count = 0
@@ -66,10 +79,13 @@ class Board:
             random_index = [random_row, random_col]
             
             # Check if index is already mine
-            random_cell = self.get_cell(random_index)
+            random_cell = self.get_cell_by_index(random_index)
             if not random_cell.is_mine():
                 random_cell.set_mine(True)
                 actual_mine_count += 1
+
+    def get_undiscovered_cells_left(self):
+        return self.undiscovered_cells_left
 
     def get_neighbors(self, index):
         neighboring_cells = []
@@ -82,7 +98,7 @@ class Board:
                 is_valid_row = neighbor_row_index >= 0 and neighbor_row_index < self.height
                 is_valid_col = neighbor_col_index >= 0 and neighbor_col_index < self.width
                 if is_valid_row and is_valid_col:
-                    neighboring_cells.append(self.get_cell([neighbor_row_index,neighbor_col_index]))
+                    neighboring_cells.append(self.get_cell_by_index([neighbor_row_index,neighbor_col_index]))
                 else:
                     pass
 
@@ -100,26 +116,27 @@ class Board:
                         neighboring_mines += 1
                         pass
 
-                target_cell = self.get_cell([row_index, col_index])
+                target_cell = self.get_cell_by_index([row_index, col_index])
                 target_cell.set_neighboring_mines(neighboring_mines)
 
     def discover_cell_and_neighbors(self, current_cell):
         # Discover cell
         current_cell.set_discovered(True)
 
+        # Discover neighbors
         if current_cell.get_neighboring_mines() == 0:
             for neighbor_cell in self.get_neighbors(current_cell.get_index()):
                 if neighbor_cell.is_undiscovered():
                     self.discover_cell_and_neighbors(neighbor_cell)
 
-    def get_cell(self, index):
+    def get_cell_by_index(self, index):
         return self.cell_array[index[0]][index[1]]
 
     def get_update_cell_sprite_list(self):
         new_list = []
         for row_index in range(self.height):
             for col_index in range(self.width):
-                cell = self.get_cell([row_index,col_index])
+                cell = self.get_cell_by_index([row_index,col_index])
                 cell.update_sprite()
                 new_list.append(cell)
         return new_list
@@ -135,3 +152,12 @@ class Board:
         if button is MouseClick.RIGHT:
             if cell.is_undiscovered():
                 cell.toggle_flagged()
+
+    def handleCellHover(self, hovered_cell: Cell):
+        if not hovered_cell == self.highlighted_cell:
+            if not self.highlighted_cell == None:
+                self.highlighted_cell.set_highlighted(False)
+            hovered_cell.set_highlighted(True)
+            self.highlighted_cell = hovered_cell
+        else:
+            pass

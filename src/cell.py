@@ -13,6 +13,7 @@ class CellSprite(str, Enum):
     NEIGHBOR_7 = "7.png"
     NEIGHBOR_8 = "8.png"
     UNDISCOVERED = "9.png"
+    UNDISCOVERED_HIGHLIGHTED = "12.png"
     FLAGGED = "10.png"
     MINE = "11.png"
 
@@ -29,6 +30,7 @@ class Cell(arcade.Sprite):
         self.discovered = False
         self.mine = False
         self.flagged = False
+        self.highlighted = False
         self.neighboring_mines = 0
 
     def update_sprite(self):
@@ -63,8 +65,10 @@ class Cell(arcade.Sprite):
                     sprite_filename = CellSprite.NEIGHBOR_8
 
         if self.is_undiscovered():
-            if self.flagged:
+            if self.is_flagged():
                sprite_filename = CellSprite.FLAGGED 
+            elif self.is_highlighted():
+                sprite_filename = CellSprite.UNDISCOVERED_HIGHLIGHTED
             else:
                 sprite_filename = CellSprite.UNDISCOVERED
 
@@ -99,3 +103,9 @@ class Cell(arcade.Sprite):
 
     def is_flagged(self):
         return self.flagged
+
+    def is_highlighted(self):
+        return self.highlighted
+
+    def set_highlighted(self, highlighted):
+        self.highlighted = highlighted

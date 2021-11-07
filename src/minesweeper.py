@@ -65,6 +65,15 @@ class Minesweeper(arcade.Window):
         # Draw sprites
         self.draw_list.draw()
 
+    def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
+        """ User moves mouse """
+        hovered_cell = arcade.get_sprites_at_point((x, y), self.draw_list)
+        if len(hovered_cell) == 1:
+            self.board.handleCellHover(hovered_cell[0])
+        elif len(hovered_cell) > 1:
+            print("Multiple cells were hovered, this should not happen")
+        pass
+
     def on_mouse_press(self, x, y, button, key_modifiers):
         clicked_cells = arcade.get_sprites_at_point((x, y), self.draw_list)
         if len(clicked_cells) == 1:
