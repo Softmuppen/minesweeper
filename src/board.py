@@ -86,11 +86,8 @@ class Board:
         self.mines_generated = True
         self.undiscovered_mineless_cells_left = (self.width * self.height) - actual_mine_count
 
-    def get_undiscovered_cells_left(self):
-        return self.undiscovered_cells_left
-
     def get_neighbors(self, target_cell: Cell):
-        index = target_cell.get_index()
+        index = target_cell.index
         neighboring_cells = []
         for neighbor_row_index in range(index[0]-1, index[0]+2):
             for neighbor_col_index in range(index[1]-1, index[1]+2):
@@ -122,15 +119,15 @@ class Board:
                 target_cell = self.get_cell_by_index([row_index, col_index])
                 target_cell.neighboring_mines = neighboring_mines
 
-    def discover_cell_and_neighbors(self, current_cell):
+    def discover_cell_and_neighbors(self, current_cell: Cell):
         # Discover cell
-        current_cell.set_discovered(True)
+        current_cell.discovered = True
         self.undiscovered_mineless_cells_left -= 1
 
         # Discover neighbors
         if current_cell.neighboring_mines == 0:
             for neighbor_cell in self.get_neighbors(current_cell):
-                if neighbor_cell.is_undiscovered():
+                if not neighbor_cell.discovered:
                     self.discover_cell_and_neighbors(neighbor_cell)
 
     def get_cell_by_index(self, index):
@@ -152,7 +149,7 @@ class Board:
         self.clicked_cell = clicked_cell
         if button is MouseClick.LEFT:
             if not self.clicked_cell.flagged:
-                if self.clicked_cell.is_undiscovered():
+                if not self.clicked_cell.discovered:
                     if not self.mines_generated:
                         self.add_mines()
                         self.calculate_neighbors()
@@ -167,7 +164,7 @@ class Board:
                     print("You lost!")
 
         if button is MouseClick.RIGHT:
-            if self.clicked_cell.is_undiscovered():
+            if not self.clicked_cell.discovered:
                 self.clicked_cell.flagged = not self.clicked_cell.flagged
 
     def handleCellHover(self, hovered_cell: Cell):
