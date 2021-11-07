@@ -76,7 +76,7 @@ class Board:
             random_cell = self.get_cell_by_index(random_index)
 
             # Avoid random cell being clicked cell and its neighbors
-            if random_cell == self.clicked_cell or random_cell in self.get_neighbors(self.clicked_cell.get_index()):
+            if random_cell == self.clicked_cell or random_cell in self.get_neighbors(self.clicked_cell):
                 continue
 
             # Check if cell is already mine
@@ -94,8 +94,8 @@ class Board:
     def get_undiscovered_cells_left(self):
         return self.undiscovered_cells_left
 
-    # Fix this to work with Cell class?
-    def get_neighbors(self, index):
+    def get_neighbors(self, target_cell: Cell):
+        index = target_cell.get_index()
         neighboring_cells = []
         for neighbor_row_index in range(index[0]-1, index[0]+2):
             for neighbor_col_index in range(index[1]-1, index[1]+2):
@@ -119,7 +119,7 @@ class Board:
 
                 # Iterate neighbor cells and count mines
                 neighboring_mines = 0
-                for neighbor_cell in self.get_neighbors([row_index, col_index]):
+                for neighbor_cell in self.get_neighbors(self.get_cell_by_index([row_index, col_index])):
                     if neighbor_cell.is_mine():
                         neighboring_mines += 1
                         pass
@@ -133,7 +133,7 @@ class Board:
 
         # Discover neighbors
         if current_cell.get_neighboring_mines() == 0:
-            for neighbor_cell in self.get_neighbors(current_cell.get_index()):
+            for neighbor_cell in self.get_neighbors(current_cell):
                 if neighbor_cell.is_undiscovered():
                     self.discover_cell_and_neighbors(neighbor_cell)
 
