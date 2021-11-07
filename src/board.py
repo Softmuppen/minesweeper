@@ -18,17 +18,13 @@ class Board:
         self.height = height
         self.cell_array = self.generate_empty_board()
         self.highlighted_cell = None
+        self.clicked_cell = None
+
+        self.difficulty = difficulty
         self.lost = False
-
-        # Calculate number of mine and add to board
-        self.mine_total = self.calculate_total_mine_count(difficulty)
-        self.add_mines(self.mine_total)
-
-        # Calculate number of undiscovered cells
-        self.undiscovered_cells_left = (self.width * self.height) - self.mine_total
-
-        self.calculate_neighbors()
-        self.print_board()
+        self.mines_generated = False
+        self.mines_total = 0
+        self.undiscovered_cells_left = (self.width * self.height) - self.mines_total
 
     def generate_empty_board(self):
         print(f"Generating {self.width}x{self.height} board with {self.width * self.height} cells")
@@ -39,7 +35,7 @@ class Board:
                 # Calculate position for new cell
                 x_position = START_X + col_index * CELL_WIDTH
                 y_position = START_Y + row_index * CELL_HEIGHT
-                
+
                 # Create new cell and add to list
                 cell = Cell([row_index, col_index])
                 cell.position = x_position, y_position
@@ -67,20 +63,27 @@ class Board:
         print(f"Adding {expected_mine_count} mines for difficulty {difficulty.name}")
         return expected_mine_count
 
-    def add_mines(self, expected_mine_count):
+    def add_mines(self):
+        expected_mine_count = self.calculate_total_mine_count(self.difficulty)
+
         # Add mines
         actual_mine_count = 0
         while actual_mine_count < expected_mine_count:
-            # Get random index
+            # Get random cell
             random_row = random.randint(0, self.height-1)
             random_col = random.randint(0, self.width-1)
             random_index = [random_row, random_col]
-            
-            # Check if index is already mine
             random_cell = self.get_cell_by_index(random_index)
-            if not random_cell.is_mine():
+
+            # Avoid random cell being clicked cell and its neighbors
+            if random_cell == self.clicked_cell or random_cell in self.get_neighbors(self.clicked_cell.get_index()):
+                continue
+
+            # Check if cell is already mine
+            if not random_cell.is_mine() and self.clicked_cell != random_cell:
                 random_cell.set_mine(True)
                 actual_mine_count += 1
+        self.mines_generated = True
 
     def set_lost(self, lost):
         self.lost = lost
@@ -91,6 +94,7 @@ class Board:
     def get_undiscovered_cells_left(self):
         return self.undiscovered_cells_left
 
+    # Fix this to work with Cell class?
     def get_neighbors(self, index):
         neighboring_cells = []
         for neighbor_row_index in range(index[0]-1, index[0]+2):
@@ -145,18 +149,23 @@ class Board:
                 new_list.append(cell)
         return new_list
 
-    def handleCellClick(self, cell: Cell, button: MouseClick):
+    def handleCellClick(self, clicked_cell: Cell, button: MouseClick):
+        self.clicked_cell = clicked_cell
         if button is MouseClick.LEFT:
-            if cell.is_undiscovered():
-                self.discover_cell_and_neighbors(cell)
+            if self.clicked_cell.is_undiscovered():
+                if not self.mines_generated:
+                    self.add_mines()
+                    self.calculate_neighbors()
+                    self.print_board()
+                self.discover_cell_and_neighbors(self.clicked_cell)
 
-            if cell.is_mine():
+            if self.clicked_cell.is_mine():
                 self.set_lost(True)
                 print("You lost!")
 
         if button is MouseClick.RIGHT:
-            if cell.is_undiscovered():
-                cell.toggle_flagged()
+            if self.clicked_cell.is_undiscovered():
+                self.clicked_cell.toggle_flagged()
 
     def handleCellHover(self, hovered_cell: Cell):
         if not hovered_cell == self.highlighted_cell:
