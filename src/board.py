@@ -14,15 +14,20 @@ START_Y = CELL_HEIGHT + (CELL_HEIGHT // 2)
 class Board:
 
     def __init__(self, width, height, difficulty):
+        # Cell variables
         self.width = width
         self.height = height
         self.cell_array = self.generate_empty_board()
         self.highlighted_cell = None
         self.clicked_cell = None
 
-        self.difficulty = difficulty
-        self.lost = False
-        self.win = False
+        # Game variables
+        self.game_difficulty = difficulty
+        self.game_ongoing = False
+        self.game_lost = False
+        self.game_won = False
+
+        # Flag and mine variables
         self.mines_generated = False
         self.mines_total = 0
         self.undiscovered_mineless_cells_left = 0
@@ -66,7 +71,7 @@ class Board:
         return expected_mine_count
 
     def add_mines(self):
-        expected_mine_count = self.calculate_total_mine_count(self.difficulty)
+        expected_mine_count = self.calculate_total_mine_count(self.game_difficulty)
 
         # Add mines
         actual_mine_count = 0
@@ -147,7 +152,9 @@ class Board:
 
     def handleCellClick(self, clicked_cell: Cell, button: MouseClick):
 
-        print(f"Undiscovered left: {self.undiscovered_mineless_cells_left}")
+        # Start game at first click
+        if not self.game_ongoing:
+            self.game_ongoing = True
 
         self.clicked_cell = clicked_cell
         if button is MouseClick.LEFT:
@@ -159,11 +166,13 @@ class Board:
                         self.print_board()
                     self.discover_cell_and_neighbors(self.clicked_cell)
                     if self.undiscovered_mineless_cells_left == 0:
-                        self.win = True
+                        self.game_won = True
+                        self.game_ongoing = False
                         print("You won!")
 
                 if self.clicked_cell.mine:
-                    self.lost = True
+                    self.game_lost = True
+                    self.game_ongoing = False
                     print("You lost!")
 
         if button is MouseClick.RIGHT:

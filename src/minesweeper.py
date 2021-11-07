@@ -36,6 +36,7 @@ class Minesweeper(arcade.Window):
     board = None
     mine_left_display = None
     draw_list = None
+    total_time = 0.0
 
     def __init__(self):
 
@@ -57,6 +58,9 @@ class Minesweeper(arcade.Window):
         self.mine_left_display = DigitDisplay(4, 0, 681)
         self.time_counter = DigitDisplay(4, 0 + (self.mine_left_display.width * 2), 681)
 
+        # Start game timer
+        self.total_time = 0.0
+
     def on_draw(self):
         """Render the screen."""
 
@@ -76,14 +80,21 @@ class Minesweeper(arcade.Window):
         self.draw_list.draw()
 
     def on_update(self, delta_time):
+        # Update game timer
+        if self.board.game_ongoing:
+            self.total_time += delta_time
+            seconds = int(self.total_time) % 60
+            self.time_counter.update_display_value(seconds)
+
+        # Update mine left counter
         self.mine_left_display.update_display_value(self.board.mines_total-self.board.flags_total)
 
         # Restart game if lost
-        if self.board.lost:
+        if self.board.game_lost:
             self.setup()
 
         # Restart game if won
-        if self.board.win:
+        if self.board.game_won:
             self.setup()
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
