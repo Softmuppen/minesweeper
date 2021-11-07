@@ -22,9 +22,9 @@ class Board:
 
         self.difficulty = difficulty
         self.lost = False
+        self.win = False
         self.mines_generated = False
-        self.mines_total = 0
-        self.undiscovered_cells_left = (self.width * self.height) - self.mines_total
+        self.undiscovered_mineless_cells_left = 0
 
     def generate_empty_board(self):
         print(f"Generating {self.width}x{self.height} board with {self.width * self.height} cells")
@@ -84,6 +84,7 @@ class Board:
                 random_cell.set_mine(True)
                 actual_mine_count += 1
         self.mines_generated = True
+        self.undiscovered_mineless_cells_left = (self.width * self.height) - actual_mine_count
 
     def set_lost(self, lost):
         self.lost = lost
@@ -130,6 +131,7 @@ class Board:
     def discover_cell_and_neighbors(self, current_cell):
         # Discover cell
         current_cell.set_discovered(True)
+        self.undiscovered_mineless_cells_left -= 1
 
         # Discover neighbors
         if current_cell.get_neighboring_mines() == 0:
@@ -150,18 +152,25 @@ class Board:
         return new_list
 
     def handleCellClick(self, clicked_cell: Cell, button: MouseClick):
+
+        print(f"Undiscovered left: {self.undiscovered_mineless_cells_left}")
+
         self.clicked_cell = clicked_cell
         if button is MouseClick.LEFT:
-            if self.clicked_cell.is_undiscovered():
-                if not self.mines_generated:
-                    self.add_mines()
-                    self.calculate_neighbors()
-                    self.print_board()
-                self.discover_cell_and_neighbors(self.clicked_cell)
+            if not self.clicked_cell.flagged:
+                if self.clicked_cell.is_undiscovered():
+                    if not self.mines_generated:
+                        self.add_mines()
+                        self.calculate_neighbors()
+                        self.print_board()
+                    self.discover_cell_and_neighbors(self.clicked_cell)
+                    if self.undiscovered_mineless_cells_left == 0:
+                        self.win = True
+                        print("You won!")
 
-            if self.clicked_cell.is_mine():
-                self.set_lost(True)
-                print("You lost!")
+                if self.clicked_cell.is_mine():
+                    self.set_lost(True)
+                    print("You lost!")
 
         if button is MouseClick.RIGHT:
             if self.clicked_cell.is_undiscovered():
