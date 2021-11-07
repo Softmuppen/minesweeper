@@ -7,7 +7,7 @@ Minesweeper Game
 import arcade
 
 from board import Board
-from mine_left_display import MinesLeftDisplay
+from digit_display import DigitDisplay
 from enums.difficulties import Difficulty
 from enums.mouse_clicks import MouseClick
 
@@ -53,8 +53,9 @@ class Minesweeper(arcade.Window):
         # Create board
         self.board = Board(BOARD_WIDTH, BOARD_HEIGHT, BOARD_DIFFICULTY)
 
-        # Create display
-        self.mine_left_display = MinesLeftDisplay(0, 681)
+        # Create displays
+        self.mine_left_display = DigitDisplay(4, 0, 681)
+        self.time_counter = DigitDisplay(4, 0 + (self.mine_left_display.width * 2), 681)
 
     def on_draw(self):
         """Render the screen."""
@@ -67,8 +68,9 @@ class Minesweeper(arcade.Window):
         # Fetch cells and add to drawlist
         self.draw_list.extend(self.board.get_update_cell_sprite_list())
 
-        # Fetch display and add to drawlist
+        # Fetch displays and add to drawlist
         self.draw_list.extend(self.mine_left_display.get_sprite_list())
+        self.draw_list.extend(self.time_counter.get_sprite_list())
 
         # Draw sprites
         self.draw_list.draw()
