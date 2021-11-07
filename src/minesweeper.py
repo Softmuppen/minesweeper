@@ -7,6 +7,7 @@ Minesweeper Game
 import arcade
 
 from board import Board
+from mine_left_display import MinesLeftDisplay
 from enums.difficulties import Difficulty
 from enums.mouse_clicks import MouseClick
 
@@ -15,8 +16,8 @@ from enums.mouse_clicks import MouseClick
 from cell import Cell
 
 # Constants
-SCREEN_WIDTH = 960
-SCREEN_HEIGHT = 704
+SCREEN_WIDTH = 960 #960
+SCREEN_HEIGHT = 704 #704
 SCREEN_TITLE = "Minesweeper"
 
 # Pyglet Constants, this is needed to get OpenGL working
@@ -24,8 +25,8 @@ ANTIALIASING=False
 
 # Board Constants
 BOARD_DIFFICULTY = Difficulty.EASY
-BOARD_WIDTH = 28 #28
-BOARD_HEIGHT = 18 #18
+BOARD_WIDTH = 10 #28
+BOARD_HEIGHT = 10 #18
 
 class Minesweeper(arcade.Window):
     """
@@ -33,6 +34,7 @@ class Minesweeper(arcade.Window):
     """
 
     board = None
+    mine_left_display = None
     draw_list = None
 
     def __init__(self):
@@ -48,8 +50,11 @@ class Minesweeper(arcade.Window):
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
 
-        # Populate drawables
+        # Create board
         self.board = Board(BOARD_WIDTH, BOARD_HEIGHT, BOARD_DIFFICULTY)
+
+        # Create display
+        self.mine_left_display = MinesLeftDisplay(0, 681)
 
     def on_draw(self):
         """Render the screen."""
@@ -62,10 +67,15 @@ class Minesweeper(arcade.Window):
         # Fetch cells and add to drawlist
         self.draw_list.extend(self.board.get_update_cell_sprite_list())
 
+        # Fetch display and add to drawlist
+        self.draw_list.extend(self.mine_left_display.get_sprite_list())
+
         # Draw sprites
         self.draw_list.draw()
 
     def on_update(self, delta_time):
+        self.mine_left_display.update_display_value(self.board.mines_total-self.board.flags_total)
+
         # Restart game if lost
         if self.board.lost:
             self.setup()

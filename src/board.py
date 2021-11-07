@@ -24,7 +24,9 @@ class Board:
         self.lost = False
         self.win = False
         self.mines_generated = False
+        self.mines_total = 0
         self.undiscovered_mineless_cells_left = 0
+        self.flags_total = 0
 
     def generate_empty_board(self):
         print(f"Generating {self.width}x{self.height} board with {self.width * self.height} cells")
@@ -84,6 +86,7 @@ class Board:
                 random_cell.mine = True
                 actual_mine_count += 1
         self.mines_generated = True
+        self.mines_total = actual_mine_count
         self.undiscovered_mineless_cells_left = (self.width * self.height) - actual_mine_count
 
     def get_neighbors(self, target_cell: Cell):
@@ -165,6 +168,10 @@ class Board:
 
         if button is MouseClick.RIGHT:
             if not self.clicked_cell.discovered:
+                if not self.clicked_cell.flagged:
+                    self.flags_total += 1
+                else:
+                    self.flags_total -= 1
                 self.clicked_cell.flagged = not self.clicked_cell.flagged
 
     def handleCellHover(self, hovered_cell: Cell):
