@@ -25,7 +25,7 @@ SCREEN_TITLE = "Minesweeper"
 ANTIALIASING=False
 
 # Board Constants
-BOARD_DIFFICULTY = Difficulty.EASY
+BOARD_DIFFICULTY = Difficulty.VERY_EASY
 BOARD_WIDTH = 28 #28
 BOARD_HEIGHT = 18 #18
 
