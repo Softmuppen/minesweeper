@@ -8,7 +8,7 @@ import arcade
 
 from board import Board
 from game_button import GameButton
-from digit_display import DigitDisplay
+from multi_digit_display import MultiDigitDisplay
 from enums.difficulties import Difficulty
 from enums.mouse_clicks import MouseClick
 
@@ -25,9 +25,9 @@ SCREEN_TITLE = "Minesweeper"
 ANTIALIASING=False
 
 # Board Constants
-BOARD_DIFFICULTY = Difficulty.VERY_EASY
-BOARD_WIDTH = 28 #28
-BOARD_HEIGHT = 18 #18
+BOARD_DIFFICULTY = Difficulty.EASY
+BOARD_WIDTH = 7 #28
+BOARD_HEIGHT = 7 #18
 
 # Debug settings
 DEBUG_MODE = False
@@ -63,14 +63,14 @@ class Minesweeper(arcade.Window):
         self.board = Board(BOARD_WIDTH, BOARD_HEIGHT, BOARD_DIFFICULTY)
 
         # Create mines left display
-        self.mine_left_display = DigitDisplay(4, 0, 681)
+        self.mine_left_display = MultiDigitDisplay(4, 0, 681)
 
         # Create Game button
         self.game_button = GameButton()
         self.game_button.position = self.mine_left_display.width + (self.game_button.width // 2), 681
 
         # Create timer display
-        self.time_counter = DigitDisplay(4, self.mine_left_display.width + self.game_button.width, 681)
+        self.time_counter = MultiDigitDisplay(4, self.mine_left_display.width + self.game_button.width, 681)
 
         # Start game timer
         self.total_time = 0.0

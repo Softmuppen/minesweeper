@@ -1,28 +1,30 @@
-from number_display import NumberDisplay
+import arcade
 
-class DigitDisplay():
+from enum import Enum
 
-    def __init__(self, number_of_digits, x_position, y_position):
-        self.display_value = 0
-        self.number_of_digits = number_of_digits
-        self.number_display_list = []
+class DigitSprite(Enum):
+    _basepath = "images/display/"
+    DIGIT_0 = _basepath + "0.png"
+    DIGIT_1 = _basepath + "1.png"
+    DIGIT_2 = _basepath + "2.png"
+    DIGIT_3 = _basepath + "3.png"
+    DIGIT_4 = _basepath + "4.png"
+    DIGIT_5 = _basepath + "5.png"
+    DIGIT_6 = _basepath + "6.png"
+    DIGIT_7 = _basepath + "7.png"
+    DIGIT_8 = _basepath + "8.png"
+    DIGIT_9 = _basepath + "9.png"
+    DIGIT_NEGATIVE = _basepath + "negative.png"
 
-        for i in range(0, self.number_of_digits):
-            number_display = NumberDisplay(0)
-            number_display.update_sprite()
-            number_display.scale = 2
-            number_display.position = x_position + (number_display.width // 2) + (number_display.width * i), y_position
-            self.number_display_list.append(number_display)
+class DigitDisplay(arcade.Sprite):
 
-        self.width = self.number_of_digits * self.number_display_list[0].width
+    def __init__(self, display_value):
+        super().__init__()
 
-    def update_display_value(self, display_value):
-        display_string = str(display_value).zfill(self.number_of_digits)
-        display_counter = 0
-        for display in self.number_display_list:
-            display.display_value = int(display_string[display_counter])
-            display.update_sprite()
-            display_counter += 1
+        self.display_value = display_value
 
-    def get_sprite_list(self):
-        return self.number_display_list
+    def update_sprite(self):
+        if self.display_value == '-':
+            self.texture = arcade.load_texture(DigitSprite.DIGIT_NEGATIVE.value)
+        else:
+            self.texture = arcade.load_texture(DigitSprite["DIGIT_" + self.display_value].value)
