@@ -34,7 +34,6 @@ class Board:
         self.flags_total = 0
 
     def generate_empty_board(self):
-        print(f"Generating {self.width}x{self.height} board with {self.width * self.height} cells")
         new_cell_array = []
         for row_index in range(self.height):
             row_list = []
@@ -67,7 +66,6 @@ class Board:
     def calculate_total_mine_count(self, difficulty: Difficulty):
         # Calculate how many mines based on diffuculty
         expected_mine_count = int(np.floor((self.width * self.height) * (difficulty / 100)))
-        print(f"Adding {expected_mine_count} mines for difficulty {difficulty.name}")
         return expected_mine_count
 
     def add_mines(self):
