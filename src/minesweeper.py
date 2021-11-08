@@ -42,7 +42,7 @@ class Minesweeper(arcade.Window):
     def __init__(self):
 
         # Call the parent class and set up the window
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, antialiasing=ANTIALIASING)
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, resizable=True, antialiasing=ANTIALIASING)
 
         # Initialize list for all drawables
         self.draw_list = None
@@ -67,6 +67,15 @@ class Minesweeper(arcade.Window):
 
         # Start game timer
         self.total_time = 0.0
+
+    def on_resize(self, width, height):
+        """ This method is automatically called when the window is resized. """
+
+        # Call the parent. Failing to do this will mess up the coordinates,
+        # and default to 0,0 at the center and the edges being -1 to 1.
+        super().on_resize(width, height)
+
+        print(f"Window resized to: {width}, {height}")
 
     def on_draw(self):
         """Render the screen."""
