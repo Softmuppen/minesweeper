@@ -26,8 +26,13 @@ ANTIALIASING=False
 
 # Board Constants
 BOARD_DIFFICULTY = Difficulty.EASY
-BOARD_WIDTH = 10 #28
-BOARD_HEIGHT = 10 #18
+BOARD_WIDTH = 28 #28
+BOARD_HEIGHT = 18 #18
+
+# Debug settings
+DEBUG_MODE = False
+if DEBUG_MODE:
+    arcade.enable_timings()
 
 class Minesweeper(arcade.Window):
     """
@@ -36,7 +41,6 @@ class Minesweeper(arcade.Window):
 
     board = None
     mine_left_display = None
-    draw_list = None
     total_time = 0.0
 
     def __init__(self):
@@ -44,8 +48,11 @@ class Minesweeper(arcade.Window):
         # Call the parent class and set up the window
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, resizable=True, antialiasing=ANTIALIASING)
 
+        # Frame counter
+        self.frame_count = 0
+
         # Initialize list for all drawables
-        self.draw_list = None
+        self.draw_list = arcade.SpriteList(use_spatial_hash=True)
 
         arcade.set_background_color(arcade.csscolor.SLATE_GRAY)
 
@@ -83,7 +90,7 @@ class Minesweeper(arcade.Window):
         arcade.start_render()
 
         # Define draw list as sprite list
-        self.draw_list = arcade.SpriteList()
+        self.draw_list = arcade.SpriteList(use_spatial_hash=True)
 
         # Fetch cells and add to drawlist
         self.draw_list.extend(self.board.get_update_cell_sprite_list())
@@ -112,6 +119,13 @@ class Minesweeper(arcade.Window):
         self.game_button.game_lost = self.board.game_lost
         self.game_button.game_won = self.board.game_won
         self.game_button.update_sprite()
+
+        # Performance analysis
+        if DEBUG_MODE:
+            self.frame_count += 1
+            if self.frame_count % 60 == 0:
+                arcade.print_timings()
+                arcade.clear_timings()
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
         """ User moves mouse """
