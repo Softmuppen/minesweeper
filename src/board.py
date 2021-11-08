@@ -164,11 +164,6 @@ class Board:
                         self.add_mines()
                         self.calculate_neighbors()
                     self.discover_cell_and_neighbors(self.clicked_cell)
-                    if self.undiscovered_mineless_cells_left == 0:
-                        self.game_won = True
-                        self.game_ongoing = False
-                        print("You won!")
-
                 if self.clicked_cell.mine:
                     self.game_lost = True
                     self.game_ongoing = False
@@ -181,6 +176,11 @@ class Board:
                 else:
                     self.flags_total -= 1
                 self.clicked_cell.flagged = not self.clicked_cell.flagged
+
+        if self.undiscovered_mineless_cells_left == 0 and self.mines_total - self.flags_total == 0:
+            self.game_won = True
+            self.game_ongoing = False
+            print("You won!")
 
     def handleCellHover(self, hovered_cell: Cell):
         if not hovered_cell == self.highlighted_cell:
